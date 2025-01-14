@@ -1,19 +1,23 @@
-import { Controller, Get, Post, Put, Response } from '@nestjs/common';
-import { Response as ExpRes } from 'express';
 import {
-  Body,
-  Header,
-  Headers,
-  Param,
+  Controller,
+  Delete,
+  Get,
+  Post,
+  Put,
   Query,
-  Req,
-  UploadedFile,
-  UploadedFiles,
-  UseInterceptors,
+  Response,
 } from '@nestjs/common';
+import { Response as ExpRes } from 'express';
+import { ResTestService } from './res-test.service';
+import { ReqTestService } from 'src/req-test/req-test.service';
 
 @Controller('res-test')
 export class ResTestController {
+  constructor(
+    private ins: ResTestService,
+    private reqIns: ReqTestService,
+  ) {}
+
   @Get()
   async get(@Response() res: ExpRes) {
     console.log(res);
@@ -37,5 +41,15 @@ export class ResTestController {
     body += `\n--${boundary}--\n`;
     res.write(body);
     res.end();
+  }
+
+  @Delete()
+  async del(@Query() obj) {
+    const result = this.ins.add(Number(obj.a), Number(obj.b));
+    const multiResult = this.reqIns.multi(Number(obj.a), Number(obj.b));
+    return {
+      result,
+      multiResult,
+    };
   }
 }
