@@ -1,13 +1,24 @@
+const { resolve } = require('node:path');
+const JavaScriptObfuscator = require('webpack-obfuscator')
+
 module.exports = function (option) {
-  console.log(option);
   return {
     ...option,
     entry: {
-      app: './src/main.ts',
+      main: './src/main.ts',
     },
     output: {
-      filename: '[name][fullhash].js',
-      path: __dirname + '/dist',
+      filename: '[name].js',
+      path: resolve(__dirname, 'dist'),
     },
+    plugins: [
+      new JavaScriptObfuscator(
+        {
+          rotateUnicodeArray: true,
+          // 数组内是需要排除的文件
+        },
+        [],
+      ),
+    ],
   };
 };
